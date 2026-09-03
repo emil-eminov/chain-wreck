@@ -35,10 +35,11 @@ const MAX_TICKS = 240
 // Concentrated where the ballistics say a solution must live: close to the
 // roof's edge, low enough to be in the ball's path, tilted to deflect the shot
 // to roughly 50 to 70 degrees.
-const RAMP_X = [-2.4, -2, -1.6, -1.2, -0.9, -0.6, -0.3, 0]
-// The ball drops less on a shorter approach, so it meets a ramp higher up.
-const RAMP_Y = [0.25, 0.4, 0.55, 0.7, 0.85, 1.0, 1.2]
-const RAMP_ROT = [-0.75, -0.6, -0.5, -0.4, -0.3, 0.3, 0.4, 0.5, 0.6, 0.75]
+const RAMP_X = [-1.4, -1.1, -0.8, -0.5, -0.2, 0.1, 0.4, 0.7, 1]
+// The approach is short, so the ball has barely dropped when it meets the ramp.
+const RAMP_Y = [0.3, 0.45, 0.6, 0.75, 0.9, 1.05, 1.2]
+// Steeper than the landscape levels needed: the shot has to go up, not along.
+const RAMP_ROT = [-0.95, -0.8, -0.7, -0.6, -0.5, -0.4, 0.4, 0.5, 0.6, 0.7, 0.8, 0.95]
 const AIM_Y = [-0.05, 0, 0.06]
 const POWER = [0.9, 1]
 

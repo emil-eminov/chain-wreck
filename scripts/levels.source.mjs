@@ -2,28 +2,34 @@
 // Kept as a script rather than JSON-by-hand so a level's shape and its recorded
 // solution are produced together and can never drift apart.
 //
-// DESIGN CONSTRAINT, learned on a phone: a portrait screen shows about six
-// metres of level width at a playable object size. Anything wider cannot be
-// taken in at a glance, so the launcher sits close to the build zone and the
-// camera follows the shot to the target rather than showing everything at once.
+// SHAPE, learned from the first phone test (SPEC 2.7): a portrait screen shows
+// roughly six metres of width and plenty of height at a playable scale. Levels
+// are therefore TALL and NARROW: about six metres wide and eight to ten tall,
+// shooting upward at towers rather than sideways at walls. The earlier
+// landscape layouts appeared as a thin band of action in a field of sky.
 //
-// DESIGN CONSTRAINT, learned the hard way: with free aim, a ballistic arc
-// clears almost any wall, so a wall alone never makes the ramp necessary. The
-// first draft of levels 1 and 3 could both be won without placing anything.
-// Every level therefore fires from under an overhang, which caps the launch
-// angle, and puts the obstacle past the overhang's edge. The ramp is the only
-// way to gain height in the gap between the two.
+// BUILD ZONES extend PAST the overhang's edge on purpose. A ramp placed under
+// the roof launches the ball into the roof's underside; the workable placements
+// are the ones out in the open, and the zone has to reach them.
+//
+// FORCING THE RAMP, learned the hard way: with free aim, a ballistic arc clears
+// almost any obstacle, so an obstacle alone never makes the ramp necessary. The
+// first draft of these levels could be won without placing anything. Every
+// level fires from under an overhang, which caps the launch angle, and puts the
+// target above and beyond the overhang's edge. A ballistic path can only ever
+// lose upward slope, so the height needed after the overhang cannot be reached
+// by aiming alone. The ramp is the only way to gain it.
 
-const GROUND = (halfWidth = 16) => ({
-  shape: { kind: 'box', half: [halfWidth, 0.5, 3] },
+const GROUND = {
+  shape: { kind: 'box', half: [11, 0.5, 3] },
   position: [0, -0.5, 0],
   look: 'ground',
-})
+}
 
 /** The overhang that turns free aim into a constrained problem. */
-const ROOF = (endX, y) => ({
-  shape: { kind: 'box', half: [(endX + 11) / 2, 0.3, 1.5] },
-  position: [(endX - 11) / 2, y, 0],
+const ROOF = (startX, endX, bottomY) => ({
+  shape: { kind: 'box', half: [(endX - startX) / 2, 0.3, 1.5] },
+  position: [(startX + endX) / 2, bottomY + 0.3, 0],
   look: 'roof',
 })
 
@@ -31,67 +37,60 @@ export const LEVELS = [
   {
     id: '01',
     name: 'Up And Over',
-    // Geometry derived from the ballistics rather than eyeballed. Under the
-    // roof a direct shot can only reach about 2.0m at the wall, so a 2.2m wall
-    // blocks it. A ramp near the roof's edge deflects the shot to roughly 60
-    // degrees, which clears the wall with room to spare. The gap between "too
-    // low to pass" and "too high to escape the roof" is the puzzle.
-    launcher: { position: [-6, 0.9, 0], maxSpeed: 24 },
+    // The gentlest version: a short tower, a wide window of workable ramp
+    // angles, and a target big enough to land on.
+    launcher: { position: [-3, 1, 0], maxSpeed: 22 },
     killLineY: -4,
     par: 1,
     inventory: [{ part: 'ramp', count: 1 }],
-    buildZones: [{ min: [-3, 0.16, -0.6], max: [0.8, 1.8, 0.6] }],
+    buildZones: [{ min: [-2.3, 0.18, -0.6], max: [1, 2.8, 0.6] }],
     terrain: [
-      GROUND(),
-      ROOF(0, 2.3),
-      { shape: { kind: 'box', half: [0.35, 1.1, 1.2] }, position: [1.9, 1.1, 0], look: 'stone' },
+      GROUND,
+      ROOF(-5.2, -0.2, 3.2),
+      { shape: { kind: 'box', half: [0.5, 2, 1.2] }, position: [2.4, 2, 0], look: 'stone' },
     ],
     structures: [],
-    // A pillar rather than a cube: a shot arriving steeply from above needs
-    // something with a vertical face to hit, or every near miss sails past it.
-    targets: [{ shape: { kind: 'box', half: [0.45, 0.9, 0.6] }, position: [3.9, 0.9, 0], health: 40 }],
+    targets: [{ shape: { kind: 'box', half: [0.45, 0.9, 0.6] }, position: [2.4, 4.9, 0], health: 35 }],
   },
   {
     id: '02',
-    name: 'Wall Job',
-    // Same wall height as level 1, but set further out with the target further
-    // still. Varying the distance rather than the wall height keeps the level
-    // inside the narrow angle window that the roof leaves open: a taller wall
-    // demanded a ramp angle the geometry cannot actually produce.
-    launcher: { position: [-6, 0.9, 0], maxSpeed: 24 },
+    name: 'High Rise',
+    // Same move, taller tower. The ramp has to be steeper and better placed.
+    launcher: { position: [-3, 1, 0], maxSpeed: 24 },
     killLineY: -4,
     par: 1,
     inventory: [{ part: 'ramp', count: 1 }],
-    buildZones: [{ min: [-3, 0.16, -0.6], max: [0.8, 1.8, 0.6] }],
+    buildZones: [{ min: [-2.3, 0.18, -0.6], max: [1, 2.8, 0.6] }],
     terrain: [
-      GROUND(),
-      ROOF(0, 2.3),
-      { shape: { kind: 'box', half: [0.35, 1.1, 1.2] }, position: [2.4, 1.1, 0], look: 'stone' },
+      GROUND,
+      ROOF(-5.2, -0.2, 3.2),
+      { shape: { kind: 'box', half: [0.5, 2.3, 1.2] }, position: [2.5, 2.3, 0], look: 'stone' },
     ],
     structures: [],
-    targets: [{ shape: { kind: 'box', half: [0.45, 0.9, 0.6] }, position: [4.6, 0.9, 0], health: 30 }],
+    targets: [{ shape: { kind: 'box', half: [0.45, 0.9, 0.6] }, position: [2.5, 5.5, 0], health: 35 }],
   },
   {
     id: '03',
     name: 'Top Heavy',
     // The first level where the collapse does the work rather than the ball.
-    // The target rides the top of a loose stack behind the wall, so a hit
-    // anywhere on the tower brings it down.
-    launcher: { position: [-6, 0.9, 0], maxSpeed: 26 },
+    // A stack of loose crates on a plinth: a hit anywhere on the tower brings
+    // the target down, and the kill line finishes it.
+    launcher: { position: [-3, 1, 0], maxSpeed: 24 },
     killLineY: -4,
     par: 1,
     inventory: [{ part: 'ramp', count: 1 }],
-    buildZones: [{ min: [-3, 0.16, -0.6], max: [0.8, 1.8, 0.6] }],
+    buildZones: [{ min: [-2.3, 0.18, -0.6], max: [1, 2.8, 0.6] }],
     terrain: [
-      GROUND(),
-      ROOF(0, 2.3),
-      { shape: { kind: 'box', half: [0.35, 1.1, 1.2] }, position: [1.9, 1.1, 0], look: 'stone' },
+      GROUND,
+      ROOF(-5.2, -0.2, 3.2),
+      // The plinth: solid, so a flat shot simply stops against it.
+      { shape: { kind: 'box', half: [0.9, 2, 1.2] }, position: [2.6, 2, 0], look: 'stone' },
     ],
     structures: [
-      { shape: { kind: 'box', half: [0.35, 0.35, 0.6] }, position: [4, 0.35, 0], look: 'crate' },
-      { shape: { kind: 'box', half: [0.35, 0.35, 0.6] }, position: [4, 1.05, 0], look: 'crate' },
-      { shape: { kind: 'box', half: [0.35, 0.35, 0.6] }, position: [4, 1.75, 0], look: 'crate' },
+      { shape: { kind: 'box', half: [0.32, 0.32, 0.6] }, position: [2.6, 4.32, 0], look: 'crate' },
+      { shape: { kind: 'box', half: [0.32, 0.32, 0.6] }, position: [2.6, 4.96, 0], look: 'crate' },
+      { shape: { kind: 'box', half: [0.32, 0.32, 0.6] }, position: [2.6, 5.6, 0], look: 'crate' },
     ],
-    targets: [{ shape: { kind: 'box', half: [0.35, 0.35, 0.6] }, position: [4, 2.45, 0], health: 35 }],
+    targets: [{ shape: { kind: 'box', half: [0.32, 0.32, 0.6] }, position: [2.6, 6.24, 0], health: 30 }],
   },
 ]

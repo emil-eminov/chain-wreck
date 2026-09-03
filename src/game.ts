@@ -169,7 +169,9 @@ export async function start(canvas: HTMLCanvasElement, hudParent: HTMLElement): 
       ...session.spec.targets.map((t) => t.position[0]),
       ...session.spec.structures.map((s) => s.position[0]),
     ]
-    return [Math.min(...xs) - 1.8, Math.max(...xs) + 1.8]
+    // Tight margins on purpose: on a portrait screen the framing distance is
+    // driven by width, so every spare metre of margin shrinks the whole level.
+    return [Math.min(...xs) - 0.8, Math.max(...xs) + 0.8]
   }
 
   /** Where the furthest target is, for the moment after the shot lands. */
