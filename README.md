@@ -34,3 +34,21 @@ inside it and every rebuild after the first fails.
 | `tests` | Vitest unit and headless-physics tests |
 | `e2e` | Playwright smoke, screenshot and performance tests |
 | `docs` | Performance baseline and decisions |
+
+## Known constraint: the folder cannot delete files
+
+This project folder is mounted without delete permission, which breaks three
+tools that assume they can remove their own scratch files:
+
+- **Vite** cannot clear its out-dir, so builds write to `~/cw-build/dist`.
+- **Git** cannot remove `.git/*.lock`, so the in-folder `.git` is unusable after
+  its first commit. The live repository lives at `~/cw-git` with this folder as
+  its work tree, and `history.bundle` here is the durable copy of that history.
+- **npm** leaves stray temp files on some operations.
+
+Granting delete permission for this folder removes all three workarounds.
+Until then, use:
+
+```
+git --git-dir=~/cw-git --work-tree=. <command>
+```
