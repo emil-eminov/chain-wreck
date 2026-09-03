@@ -2,6 +2,11 @@
 // Kept as a script rather than JSON-by-hand so a level's shape and its recorded
 // solution are produced together and can never drift apart.
 //
+// DESIGN CONSTRAINT, learned on a phone: a portrait screen shows about six
+// metres of level width at a playable object size. Anything wider cannot be
+// taken in at a glance, so the launcher sits close to the build zone and the
+// camera follows the shot to the target rather than showing everything at once.
+//
 // DESIGN CONSTRAINT, learned the hard way: with free aim, a ballistic arc
 // clears almost any wall, so a wall alone never makes the ramp necessary. The
 // first draft of levels 1 and 3 could both be won without placing anything.
@@ -31,7 +36,7 @@ export const LEVELS = [
     // blocks it. A ramp near the roof's edge deflects the shot to roughly 60
     // degrees, which clears the wall with room to spare. The gap between "too
     // low to pass" and "too high to escape the roof" is the puzzle.
-    launcher: { position: [-9, 0.9, 0], maxSpeed: 24 },
+    launcher: { position: [-6, 0.9, 0], maxSpeed: 24 },
     killLineY: -4,
     par: 1,
     inventory: [{ part: 'ramp', count: 1 }],
@@ -53,7 +58,7 @@ export const LEVELS = [
     // still. Varying the distance rather than the wall height keeps the level
     // inside the narrow angle window that the roof leaves open: a taller wall
     // demanded a ramp angle the geometry cannot actually produce.
-    launcher: { position: [-9, 0.9, 0], maxSpeed: 24 },
+    launcher: { position: [-6, 0.9, 0], maxSpeed: 24 },
     killLineY: -4,
     par: 1,
     inventory: [{ part: 'ramp', count: 1 }],
@@ -72,7 +77,7 @@ export const LEVELS = [
     // The first level where the collapse does the work rather than the ball.
     // The target rides the top of a loose stack behind the wall, so a hit
     // anywhere on the tower brings it down.
-    launcher: { position: [-9, 0.9, 0], maxSpeed: 26 },
+    launcher: { position: [-6, 0.9, 0], maxSpeed: 26 },
     killLineY: -4,
     par: 1,
     inventory: [{ part: 'ramp', count: 1 }],
@@ -83,10 +88,10 @@ export const LEVELS = [
       { shape: { kind: 'box', half: [0.35, 1.1, 1.2] }, position: [1.9, 1.1, 0], look: 'stone' },
     ],
     structures: [
-      { shape: { kind: 'box', half: [0.35, 0.35, 0.6] }, position: [5, 0.35, 0], look: 'crate' },
-      { shape: { kind: 'box', half: [0.35, 0.35, 0.6] }, position: [5, 1.05, 0], look: 'crate' },
-      { shape: { kind: 'box', half: [0.35, 0.35, 0.6] }, position: [5, 1.75, 0], look: 'crate' },
+      { shape: { kind: 'box', half: [0.35, 0.35, 0.6] }, position: [4, 0.35, 0], look: 'crate' },
+      { shape: { kind: 'box', half: [0.35, 0.35, 0.6] }, position: [4, 1.05, 0], look: 'crate' },
+      { shape: { kind: 'box', half: [0.35, 0.35, 0.6] }, position: [4, 1.75, 0], look: 'crate' },
     ],
-    targets: [{ shape: { kind: 'box', half: [0.35, 0.35, 0.6] }, position: [5, 2.45, 0], health: 35 }],
+    targets: [{ shape: { kind: 'box', half: [0.35, 0.35, 0.6] }, position: [4, 2.45, 0], health: 35 }],
   },
 ]

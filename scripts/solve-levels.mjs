@@ -36,7 +36,8 @@ const MAX_TICKS = 240
 // roof's edge, low enough to be in the ball's path, tilted to deflect the shot
 // to roughly 50 to 70 degrees.
 const RAMP_X = [-2.4, -2, -1.6, -1.2, -0.9, -0.6, -0.3, 0]
-const RAMP_Y = [0.2, 0.3, 0.42, 0.55, 0.7]
+// The ball drops less on a shorter approach, so it meets a ramp higher up.
+const RAMP_Y = [0.25, 0.4, 0.55, 0.7, 0.85, 1.0, 1.2]
 const RAMP_ROT = [-0.75, -0.6, -0.5, -0.4, -0.3, 0.3, 0.4, 0.5, 0.6, 0.75]
 const AIM_Y = [-0.05, 0, 0.06]
 const POWER = [0.9, 1]

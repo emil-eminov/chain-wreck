@@ -35,6 +35,20 @@ test('the hud offers a build with one ramp and a fire button', async ({ page }) 
   await expect(page.locator('[data-title]')).toContainText('Up And Over')
 })
 
+/**
+ * Portrait is the orientation this game will actually be played in, and the
+ * first playable build framed the level so badly on a tall screen that it was
+ * a thin strip of action in a field of sky. Every test passed regardless,
+ * because none of them looked at a phone-shaped viewport.
+ */
+test('level 1 fills a phone screen held upright', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  await page.waitForFunction(() => window.__chainwreck !== undefined, null, { timeout: 30_000 })
+  await page.waitForTimeout(1500)
+  expect(await page.screenshot()).toMatchSnapshot('level-01-portrait.png', { maxDiffPixelRatio: 0.03 })
+})
+
 test('level 1 renders as designed', async ({ page }) => {
   await page.goto('/')
   await page.waitForFunction(() => window.__chainwreck !== undefined, null, { timeout: 30_000 })

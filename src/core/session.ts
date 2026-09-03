@@ -126,6 +126,7 @@ export class Session {
   }
 
   private rebuild(): void {
+    this.shot = undefined
     this.runtime = this.build()
     for (const placement of this.placements) this.spawnPart(placement)
   }
@@ -141,6 +142,13 @@ export class Session {
 
   cancelAim(): void {
     this.setPhase('BUILD')
+  }
+
+  private shot: RAPIER.RigidBody | undefined
+
+  /** The projectile in flight, while it exists. The camera follows it. */
+  get projectile(): RAPIER.RigidBody | undefined {
+    return this.shot?.isValid() ? this.shot : undefined
   }
 
   /** Fires the single projectile. `direction` need not be normalised. */
@@ -166,6 +174,7 @@ export class Session {
       { x: (direction[0] / length) * speed, y: (direction[1] / length) * speed, z: 0 },
       true,
     )
+    this.shot = body
     this.runtime.beginAttempt()
     this.setPhase('SIMULATE')
   }

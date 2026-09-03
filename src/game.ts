@@ -3,7 +3,7 @@ import { FrameSampler } from './core/harness'
 import { Session } from './core/session'
 import { LEVELS } from './levels'
 import { partById } from './parts/registry'
-import { createCamera, frameLevel, resizeCamera } from './render/camera'
+import { CameraRig, createCamera } from './render/camera'
 import { createRenderer, createScene } from './render/scene'
 import { View } from './render/view'
 import { createHud } from './ui/hud'
@@ -22,6 +22,7 @@ export async function start(canvas: HTMLCanvasElement, hudParent: HTMLElement): 
   const renderer = createRenderer(canvas)
   const scene = createScene()
   const camera = createCamera(window.innerWidth / window.innerHeight)
+  const rig = new CameraRig(camera, 0)
   const view = new View(scene)
   const frames = new FrameSampler()
   const steps = new FrameSampler()
@@ -59,6 +60,7 @@ export async function start(canvas: HTMLCanvasElement, hudParent: HTMLElement): 
     onRetry: () => {
       session.retry()
       hud.hideResult()
+      rig.frameWholeLevel()
       refresh()
     },
     onNext: () => {
@@ -77,7 +79,10 @@ export async function start(canvas: HTMLCanvasElement, hudParent: HTMLElement): 
     })
     rotation = 0.5
     view.setLevelDecor(session.spec.launcher.position, session.spec.buildZones)
-    frameCurrentLevel()
+    rig.setAspect(window.innerWidth / window.innerHeight)
+    rig.setLevelBounds(...levelBounds())
+    rig.frameWholeLevel()
+    rig.snap()
     hud.setLevel(session.spec.name, levelIndex, LEVELS.length)
     refresh()
   }
@@ -157,20 +162,27 @@ export async function start(canvas: HTMLCanvasElement, hudParent: HTMLElement): 
     view.showGhost(partById(RAMP), point, rotation, session.check(RAMP, point, rotation) === 'ok')
   }
 
-  /** Frames from the launcher to the furthest thing worth seeing. */
-  function frameCurrentLevel(): void {
+  /** The span worth showing: launcher at one end, furthest target at the other. */
+  function levelBounds(): [number, number] {
     const xs = [
       session.spec.launcher.position[0],
       ...session.spec.targets.map((t) => t.position[0]),
       ...session.spec.structures.map((s) => s.position[0]),
     ]
-    frameLevel(camera, Math.min(...xs) - 1.5, Math.max(...xs) + 1.5, window.innerWidth / window.innerHeight)
+    return [Math.min(...xs) - 1.8, Math.max(...xs) + 1.8]
+  }
+
+  /** Where the furthest target is, for the moment after the shot lands. */
+  function targetFocusX(): number {
+    const xs = session.spec.targets.map((t) => t.position[0])
+    return xs.length > 0 ? Math.max(...xs) : session.spec.launcher.position[0]
   }
 
   function resize(): void {
     renderer.setSize(window.innerWidth, window.innerHeight, false)
-    resizeCamera(camera, window.innerWidth / window.innerHeight)
-    if (session) frameCurrentLevel()
+    if (!session) return
+    rig.setAspect(window.innerWidth / window.innerHeight)
+    rig.setLevelBounds(...levelBounds())
   }
   resize()
   window.addEventListener('resize', resize)
@@ -189,6 +201,12 @@ export async function start(canvas: HTMLCanvasElement, hudParent: HTMLElement): 
       }
     },
     () => {
+      // Wide while planning, close while watching.
+      const shot = session.projectile
+      if (session.phase === 'SIMULATE' && shot) rig.followAction(shot.translation().x)
+      else if (session.phase === 'SIMULATE' || session.phase === 'RESULT') rig.followAction(targetFocusX())
+      else rig.frameWholeLevel()
+      rig.update()
       view.sync()
       renderer.render(scene, camera)
       const now = performance.now()
