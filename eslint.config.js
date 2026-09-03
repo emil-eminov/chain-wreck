@@ -13,5 +13,22 @@ export default tseslint.config(
       'no-console': ['warn', { allow: ['warn', 'error'] }],
     },
   },
-  { ignores: ['dist/**', 'node_modules/**', 'playwright-report/**', 'test-results/**'] },
+  {
+    // Build tooling, not shipped code: printing progress is the entire point,
+    // and it runs in node rather than in a browser.
+    files: ['scripts/**'],
+    languageOptions: { globals: { process: 'readonly', console: 'readonly', Buffer: 'readonly' } },
+    rules: { 'no-console': 'off' },
+  },
+  {
+    ignores: [
+      'dist/**',
+      'node_modules/**',
+      'playwright-report/**',
+      'test-results/**',
+      // Scratch files. The project folder cannot delete, so they are ignored
+      // rather than removed. See README.
+      '**/_*',
+    ],
+  },
 )

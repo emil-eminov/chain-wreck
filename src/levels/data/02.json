@@ -1,0 +1,122 @@
+{
+  "id": "02",
+  "name": "Wall Job",
+  "launcher": {
+    "position": [
+      -9,
+      0.9,
+      0
+    ],
+    "maxSpeed": 24
+  },
+  "killLineY": -4,
+  "par": 1,
+  "inventory": [
+    {
+      "part": "ramp",
+      "count": 1
+    }
+  ],
+  "buildZones": [
+    {
+      "min": [
+        -3,
+        0.16,
+        -0.6
+      ],
+      "max": [
+        0.8,
+        1.8,
+        0.6
+      ]
+    }
+  ],
+  "terrain": [
+    {
+      "shape": {
+        "kind": "box",
+        "half": [
+          16,
+          0.5,
+          3
+        ]
+      },
+      "position": [
+        0,
+        -0.5,
+        0
+      ],
+      "look": "ground"
+    },
+    {
+      "shape": {
+        "kind": "box",
+        "half": [
+          5.5,
+          0.3,
+          1.5
+        ]
+      },
+      "position": [
+        -5.5,
+        2.3,
+        0
+      ],
+      "look": "roof"
+    },
+    {
+      "shape": {
+        "kind": "box",
+        "half": [
+          0.35,
+          1.1,
+          1.2
+        ]
+      },
+      "position": [
+        2.4,
+        1.1,
+        0
+      ],
+      "look": "stone"
+    }
+  ],
+  "structures": [],
+  "targets": [
+    {
+      "shape": {
+        "kind": "box",
+        "half": [
+          0.45,
+          0.9,
+          0.6
+        ]
+      },
+      "position": [
+        4.6,
+        0.9,
+        0
+      ],
+      "health": 30
+    }
+  ],
+  "solution": {
+    "placements": [
+      {
+        "part": "ramp",
+        "position": [
+          -0.6,
+          0.7,
+          0
+        ],
+        "rotationZ": 0.4
+      }
+    ],
+    "aim": [
+      1,
+      0.06,
+      0
+    ],
+    "power": 0.9
+  }
+}

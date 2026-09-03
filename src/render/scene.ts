@@ -28,11 +28,11 @@ export function createRenderer(canvas: HTMLCanvasElement): WebGLRenderer {
 export function createScene(): Scene {
   const scene = new Scene()
   scene.background = new Color(PALETTE.sky)
-  scene.fog = new Fog(PALETTE.sky, 40, 90)
+  scene.fog = new Fog(PALETTE.sky, 60, 140)
 
-  scene.add(new AmbientLight(0xffffff, 1.1))
+  scene.add(new AmbientLight(0xdfe8f2, 2.2))
 
-  const sun = new DirectionalLight(0xfff0d0, 2.4)
+  const sun = new DirectionalLight(0xfff4dc, 2.8)
   sun.position.set(8, 14, 6)
   sun.castShadow = true
   sun.shadow.mapSize.set(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE)

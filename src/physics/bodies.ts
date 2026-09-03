@@ -11,9 +11,20 @@ export interface BodySpec {
   readonly position: readonly [number, number, number]
   /** Fixed bodies are terrain and placed static parts. Dynamic bodies move. */
   readonly dynamic: boolean
+  /** Rotation about Z, in radians. The 2.5D view makes Z the tilt axis. */
+  readonly rotationZ?: number
   readonly density?: number
   readonly friction?: number
   readonly restitution?: number
+  readonly linearDamping?: number
+  readonly angularDamping?: number
+  /**
+   * Continuous collision detection. Needed by anything fast enough to move
+   * further in one tick than the thickness of what it should hit: the
+   * projectile travels ~0.4m per tick and tunnelled straight through ramps
+   * without this.
+   */
+  readonly ccd?: boolean
 }
 
 /** Defaults chosen so wooden-feeling blocks stack without sliding or bouncing. */
@@ -23,8 +34,13 @@ const DEFAULT_RESTITUTION = 0.05
 
 export function addBody(world: RAPIER.World, spec: BodySpec): RAPIER.RigidBody {
   const [x, y, z] = spec.position
+  const halfAngle = (spec.rotationZ ?? 0) / 2
   const bodyDesc = (spec.dynamic ? R.RigidBodyDesc.dynamic() : R.RigidBodyDesc.fixed())
     .setTranslation(x, y, clampToSlab(z))
+    .setRotation({ x: 0, y: 0, z: Math.sin(halfAngle), w: Math.cos(halfAngle) })
+    .setLinearDamping(spec.linearDamping ?? 0)
+    .setAngularDamping(spec.angularDamping ?? 0)
+    .setCcdEnabled(spec.ccd ?? false)
   const body = world.createRigidBody(bodyDesc)
 
   const colliderDesc = colliderFor(spec.shape)

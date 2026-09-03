@@ -23,6 +23,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['tests/**/*.test.ts'],
+    // Underscore-prefixed files are scratch: see tests/core/_probe.test.ts.
+    include: ['tests/**/[!_]*.test.ts'],
   },
 })

@@ -100,6 +100,13 @@ export class InstancePool {
   get used(): number {
     return this.next - this.free.length
   }
+
+  dispose(): void {
+    this.mesh.removeFromParent()
+    this.mesh.geometry.dispose()
+    ;(this.mesh.material as { dispose(): void }).dispose()
+    this.mesh.dispose()
+  }
 }
 
 export class InstanceRegistry {
@@ -118,5 +125,11 @@ export class InstanceRegistry {
 
   flush(): void {
     for (const pool of this.pools.values()) pool.flush()
+  }
+
+  /** Releases GPU resources. Called on a retry, which rebuilds the world. */
+  dispose(): void {
+    for (const pool of this.pools.values()) pool.dispose()
+    this.pools.clear()
   }
 }

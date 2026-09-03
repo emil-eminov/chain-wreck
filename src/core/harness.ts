@@ -21,6 +21,9 @@ export interface DebugHarness {
   /** Frame statistics since the last `resetStats()`. */
   stats(): FrameStats
   resetStats(): void
+  /** Plays the current level's recorded solution. Used by the browser tests. */
+  fireSolution?(): boolean
+  phase?(): string
 }
 
 declare global {
